@@ -22,8 +22,8 @@
 - 🌐 **Always Updated** — Pulls fresh data directly from APIs.  
 
 <p align="center">
-  <img src="https://github.com/<your-username>/ineedcinema.site/assets/screenshot1.png" alt="homepage preview" width="45%">
-  <img src="https://github.com/<your-username>/ineedcinema.site/assets/screenshot2.png" alt="movie page preview" width="45%">
+  <img src="https://github.com/raidenahnie/ineedcinema.site/assets/screenshot1.png" alt="homepage preview" width="45%">
+  <img src="https://github.com/raidenahnie/ineedcinema.site/assets/screenshot2.png" alt="movie page preview" width="45%">
 </p>
 
 ---
@@ -51,7 +51,7 @@
 ## 📜 License
 
 Licensed under the [MIT License](./LICENSE).  
-© 2025 **Daniel Parreño**. All rights reserved.
+© 2025 **Daniel Kyle Parreño**. All rights reserved.
 
 ---
 
@@ -60,7 +60,7 @@ Licensed under the [MIT License](./LICENSE).
   <a href="https://ineedcinema.site">
     <img src="https://img.shields.io/badge/Visit%20Website-0D1117?style=for-the-badge&logo=vercel&logoColor=white">
   </a>
-  <a href="https://github.com/<your-username>">
+  <a href="https://github.com/raidenahnie">
     <img src="https://img.shields.io/badge/Follow%20on%20GitHub-181717?style=for-the-badge&logo=github&logoColor=white">
   </a>
 </p>
