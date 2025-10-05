@@ -8,7 +8,7 @@
 ---
 
 <p align="center">
-  <img src="https://github.com/raidenahnie/ineedcinema.site/assets/banner.png" alt="ineedcinema banner" width="800">
+  <img src="https://github.com/raidenahnie/ineedcinema.site/blob/main/assets/banner.png" alt="ineedcinema banner" width="800">
 </p>
 
 ---
@@ -22,8 +22,8 @@
 - 🌐 **Always Updated** — Pulls fresh data directly from APIs.  
 
 <p align="center">
-  <img src="https://github.com/raidenahnie/ineedcinema.site/assets/screenshot1.png" alt="homepage preview" width="45%">
-  <img src="https://github.com/raidenahnie/ineedcinema.site/assets/screenshot2.png" alt="movie page preview" width="45%">
+  <img src="https://github.com/raidenahnie/ineedcinema.site/blob/main/assets/screenshot1.png" alt="homepage preview" width="45%">
+  <img src="https://github.com/raidenahnie/ineedcinema.site/blob/main/assets/screenshot2.png" alt="movie page preview" width="45%">
 </p>
 
 ---
