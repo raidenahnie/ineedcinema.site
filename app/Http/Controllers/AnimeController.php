@@ -216,6 +216,129 @@ class AnimeController extends Controller
     }
 
     /**
+     * Anime index page
+     */
+    public function index()
+    {
+        return view('anime');
+    }
+
+    /**
+     * Search only anime
+     */
+    public function searchAnime(Request $request): JsonResponse
+    {
+        // This is the same as the existing search method
+        return $this->search($request);
+    }
+
+    /**
+     * Get top anime
+     */
+    public function top(Request $request): JsonResponse
+    {
+        $page = $request->input('page', 1);
+        $filter = $request->input('filter', ''); // Can be 'airing', 'upcoming', 'bypopularity', 'favorite'
+
+        try {
+            $params = [
+                'page' => $page,
+                'limit' => 25
+            ];
+
+            if ($filter) {
+                $params['filter'] = $filter;
+            }
+
+            $response = Http::get('https://api.jikan.moe/v4/top/anime', $params);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                // Process results to add streaming URLs
+                if (isset($data['data'])) {
+                    foreach ($data['data'] as &$anime) {
+                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
+                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
+                    }
+                }
+
+                return response()->json($data);
+            }
+
+            return response()->json(['error' => 'Failed to fetch top anime'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Service unavailable'], 503);
+        }
+    }
+
+    /**
+     * Get current season anime
+     */
+    public function seasonNow(Request $request): JsonResponse
+    {
+        $page = $request->input('page', 1);
+
+        try {
+            $response = Http::get('https://api.jikan.moe/v4/seasons/now', [
+                'page' => $page,
+                'limit' => 25
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                // Process results to add streaming URLs
+                if (isset($data['data'])) {
+                    foreach ($data['data'] as &$anime) {
+                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
+                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
+                    }
+                }
+
+                return response()->json($data);
+            }
+
+            return response()->json(['error' => 'Failed to fetch current season anime'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Service unavailable'], 503);
+        }
+    }
+
+    /**
+     * Get upcoming season anime
+     */
+    public function seasonUpcoming(Request $request): JsonResponse
+    {
+        $page = $request->input('page', 1);
+
+        try {
+            $response = Http::get('https://api.jikan.moe/v4/seasons/upcoming', [
+                'page' => $page,
+                'limit' => 25
+            ]);
+
+            if ($response->successful()) {
+                $data = $response->json();
+                
+                // Process results to add streaming URLs
+                if (isset($data['data'])) {
+                    foreach ($data['data'] as &$anime) {
+                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
+                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
+                    }
+                }
+
+                return response()->json($data);
+            }
+
+            return response()->json(['error' => 'Failed to fetch upcoming anime'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Service unavailable'], 503);
+        }
+    }
+
+    /**
      * Get anime episodes (if available from API)
      */
     public function episodes(int $id): JsonResponse

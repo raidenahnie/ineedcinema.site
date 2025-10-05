@@ -216,6 +216,58 @@ class MovieController extends Controller
     }
 
     /**
+     * Movies index page
+     */
+    public function index()
+    {
+        return view('movies');
+    }
+
+    /**
+     * Search page
+     */
+    public function searchPage(Request $request)
+    {
+        return view('search');
+    }
+
+    /**
+     * Search only movies
+     */
+    public function searchMovies(Request $request): JsonResponse
+    {
+        $request->validate([
+            'q' => 'required|string|min:1|max:255',
+            'page' => 'sometimes|integer|min:1|max:1000'
+        ]);
+
+        $query = $request->input('q');
+        $page = $request->input('page', 1);
+
+        $results = $this->tmdbService->search($query, $page);
+        
+        // Filter to only movies
+        if (isset($results['results'])) {
+            $results['results'] = array_filter($results['results'], function($item) {
+                return ($item['media_type'] ?? 'movie') === 'movie';
+            });
+            $results['results'] = array_values($results['results']); // Re-index array
+        }
+
+        // Process results to add streaming URLs
+        if (isset($results['results'])) {
+            foreach ($results['results'] as &$movie) {
+                $movie['streaming_url'] = $this->vidlinkService->getMovieStreamUrl($movie['id']);
+                $movie['poster_url'] = $this->tmdbService->getImageUrl($movie['poster_path'] ?? '');
+                $movie['backdrop_url'] = $this->tmdbService->getBackdropUrl($movie['backdrop_path'] ?? '');
+                $movie['year'] = $this->tmdbService->getYear($movie['release_date'] ?? '');
+            }
+        }
+
+        return response()->json($results);
+    }
+
+    /**
      * Helper method to get streaming URL based on media type
      */
     private function getStreamingUrl(array $item): string

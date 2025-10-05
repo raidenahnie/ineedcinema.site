@@ -20,6 +20,11 @@
     <!-- Hero Content -->
     <div class="relative z-20 container mx-auto px-4 text-center">
         <div class="max-w-4xl mx-auto">
+
+
+            <!--<p>todo: walang laman yung anime, di rin makapag search at need i optimize yung landing page kasi napakahaba</p>-->
+
+            
             <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                 Unlimited movies, TV shows, and more
             </h1>

@@ -42,22 +42,25 @@
                 <!-- Navigation Menu -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="{{ route('home') }}" class="text-white hover:text-red-500 transition-colors duration-200 @if(request()->routeIs('home')) text-red-500 @endif">Home</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">Movies</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">TV Shows</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">Genres</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">My List</a>
+                    <a href="{{ route('movies') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200 @if(request()->routeIs('movies')) text-red-500 @endif">Movies</a>
+                    <a href="{{ route('tv-shows') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200 @if(request()->routeIs('tv-shows')) text-red-500 @endif">TV Shows</a>
+                    <a href="{{ route('anime') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200 @if(request()->routeIs('anime')) text-red-500 @endif">Anime</a>
                 </div>
                 
                 <!-- Search and User Actions -->
                 <div class="flex items-center space-x-4">
                     <!-- Search -->
                     <div class="hidden sm:block">
-                        <div class="relative">
+                        <form action="{{ route('search') }}" method="GET" class="relative">
                             <input type="text" 
-                                   placeholder="Search movies, TV shows..." 
+                                   name="q"
+                                   id="headerSearch"
+                                   placeholder="Search movies, TV shows, anime..." 
                                    class="bg-gray-800 text-white placeholder-gray-400 rounded-lg px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-red-500">
-                            <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        </div>
+                            <button type="submit" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
                     </div>
                     
                     <!-- Mobile Search -->
@@ -88,16 +91,18 @@
             <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 border-t border-gray-800">
                 <div class="flex flex-col space-y-4 mt-4">
                     <a href="{{ route('home') }}" class="text-white hover:text-red-500 transition-colors duration-200">Home</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">Movies</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">TV Shows</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">Genres</a>
-                    <a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200">My List</a>
+                    <a href="{{ route('movies') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200">Movies</a>
+                    <a href="{{ route('tv-shows') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200">TV Shows</a>
+                    <a href="{{ route('anime') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200">Anime</a>
                     
                     <!-- Mobile Search -->
                     <div class="mt-4">
-                        <input type="text" 
-                               placeholder="Search movies, TV shows..." 
-                               class="bg-gray-800 text-white placeholder-gray-400 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <form action="{{ route('search') }}" method="GET">
+                            <input type="text" 
+                                   name="q"
+                                   placeholder="Search movies, TV shows, anime..." 
+                                   class="bg-gray-800 text-white placeholder-gray-400 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-red-500">
+                        </form>
                     </div>
                 </div>
             </div>

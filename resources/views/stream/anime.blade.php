@@ -187,13 +187,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Optional: Handle fullscreen
+// Enhanced fullscreen handling
+let isFullscreen = false;
+
 document.addEventListener('keydown', function(e) {
     if (e.key === 'f' || e.key === 'F') {
-        const iframe = document.getElementById('anime-player');
-        if (iframe.requestFullscreen) {
-            iframe.requestFullscreen();
-        }
+        toggleFullscreen();
+    }
+    if (e.key === 'Escape') {
+        exitFullscreen();
     }
     
     // Arrow key navigation
@@ -202,6 +204,52 @@ document.addEventListener('keydown', function(e) {
     } else if (e.key === 'ArrowLeft') {
         changeEpisode(-1);
     }
+});
+
+function toggleFullscreen() {
+    if (!isFullscreen) {
+        enterFullscreen();
+    } else {
+        exitFullscreen();
+    }
+}
+
+function enterFullscreen() {
+    const iframe = document.getElementById('anime-player');
+    if (iframe) {
+        if (iframe.requestFullscreen) {
+            iframe.requestFullscreen();
+        } else if (iframe.webkitRequestFullscreen) {
+            iframe.webkitRequestFullscreen();
+        } else if (iframe.msRequestFullscreen) {
+            iframe.msRequestFullscreen();
+        }
+        isFullscreen = true;
+    }
+}
+
+function exitFullscreen() {
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+    }
+    isFullscreen = false;
+}
+
+// Listen for fullscreen changes
+document.addEventListener('fullscreenchange', function() {
+    isFullscreen = !!document.fullscreenElement;
+});
+
+document.addEventListener('webkitfullscreenchange', function() {
+    isFullscreen = !!document.webkitFullscreenElement;
+});
+
+document.addEventListener('msfullscreenchange', function() {
+    isFullscreen = !!document.msFullscreenElement;
 });
 </script>
 @endsection
