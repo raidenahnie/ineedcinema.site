@@ -21,11 +21,11 @@ class TMDBService
     }
 
     /**
-     * Search for movies and TV shows
+     * Multi-search for movies, TV shows, and people in one call (FAST)
      */
-    public function search(string $query, int $page = 1): array
+    public function multiSearch(string $query, int $page = 1): array
     {
-        $cacheKey = "tmdb_search_{$query}_page_{$page}";
+        $cacheKey = "tmdb_multi_search_" . md5($query) . "_page_{$page}";
         
         return Cache::remember($cacheKey, 300, function () use ($query, $page) {
             try {
@@ -42,17 +42,25 @@ class TMDBService
                     return $response->json();
                 }
 
-                Log::error('TMDB Search API Error', [
+                Log::error('TMDB Multi-Search API Error', [
                     'status' => $response->status(),
                     'body' => $response->body()
                 ]);
 
                 return ['results' => [], 'total_pages' => 0, 'total_results' => 0];
             } catch (\Exception $e) {
-                Log::error('TMDB Search Exception', ['error' => $e->getMessage()]);
+                Log::error('TMDB Multi-Search Exception', ['error' => $e->getMessage()]);
                 return ['results' => [], 'total_pages' => 0, 'total_results' => 0];
             }
         });
+    }
+
+    /**
+     * Search for movies and TV shows (alias for multiSearch)
+     */
+    public function search(string $query, int $page = 1): array
+    {
+        return $this->multiSearch($query, $page);
     }
 
     /**
