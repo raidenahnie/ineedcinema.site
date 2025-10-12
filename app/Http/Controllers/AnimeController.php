@@ -35,10 +35,26 @@ class AnimeController extends Controller
             // Search TMDB for TV shows
             $results = $this->tmdbService->searchTVShows($query, $page);
             
-            // Filter for anime (animation genre - genre_id: 16)
+            // Filter for anime (animation genre + Japanese/Asian origin)
             if (isset($results['results'])) {
                 $results['results'] = array_filter($results['results'], function($show) {
-                    return isset($show['genre_ids']) && in_array(16, $show['genre_ids']);
+                    // Must have Animation genre (16)
+                    if (!isset($show['genre_ids']) || !in_array(16, $show['genre_ids'])) {
+                        return false;
+                    }
+                    
+                    // Filter by Japanese/Asian origin countries
+                    $animeOrigins = ['JP', 'KR', 'CN', 'TW', 'HK', 'TH']; // Japan, Korea, China, Taiwan, Hong Kong, Thailand
+                    if (isset($show['origin_country']) && is_array($show['origin_country'])) {
+                        return count(array_intersect($show['origin_country'], $animeOrigins)) > 0;
+                    }
+                    
+                    // If no origin country, check original language (ja = Japanese, ko = Korean, zh = Chinese)
+                    if (isset($show['original_language'])) {
+                        return in_array($show['original_language'], ['ja', 'ko', 'zh']);
+                    }
+                    
+                    return false;
                 });
                 
                 // Re-index array after filtering
@@ -80,16 +96,17 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get popular anime (using TMDB Animation genre)
+     * Get popular anime (using TMDB Animation genre + Asian origins)
      */
     public function popular(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            // Get popular TV shows with Animation genre (16)
+            // Get popular TV shows with Animation genre (16) from Japan/Asia
             $results = $this->tmdbService->discoverTV([
                 'with_genres' => 16, // Animation
+                'with_origin_country' => 'JP|KR|CN|TW|HK|TH', // Japan, Korea, China, Taiwan, Hong Kong, Thailand
                 'sort_by' => 'popularity.desc',
                 'page' => $page
             ]);
@@ -108,16 +125,17 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get anime by genre (TMDB genre IDs)
+     * Get anime by genre (TMDB genre IDs + Asian origins)
      */
     public function byGenre(Request $request, int $genreId): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            // Get TV shows with Animation (16) + specified genre
+            // Get TV shows with Animation (16) + specified genre from Japan/Asia
             $results = $this->tmdbService->discoverTV([
                 'with_genres' => "16,{$genreId}", // Animation + specified genre
+                'with_origin_country' => 'JP|KR|CN|TW|HK|TH',
                 'sort_by' => 'popularity.desc',
                 'page' => $page
             ]);
@@ -173,7 +191,7 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get filtered anime (TMDB-based)
+     * Get filtered anime (TMDB-based + Asian origins)
      */
     public function filter(Request $request): JsonResponse
     {
@@ -186,6 +204,7 @@ class AnimeController extends Controller
         try {
             $params = [
                 'with_genres' => 16, // Always include Animation
+                'with_origin_country' => 'JP|KR|CN|TW|HK|TH', // Asian origins
                 'sort_by' => $sortBy,
                 'page' => $page
             ];
@@ -292,6 +311,7 @@ class AnimeController extends Controller
         try {
             $params = [
                 'with_genres' => 16, // Animation genre
+                'with_origin_country' => 'JP|KR|CN|TW|HK|TH', // Asian origins
                 'page' => $page
             ];
 
@@ -339,16 +359,17 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get current season anime (TMDB recent animation)
+     * Get current season anime (TMDB recent animation from Asia)
      */
     public function seasonNow(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            // Get animation shows from this year
+            // Get animation shows from this year from Japan/Asia
             $results = $this->tmdbService->discoverTV([
                 'with_genres' => 16, // Animation genre
+                'with_origin_country' => 'JP|KR|CN|TW|HK|TH',
                 'first_air_date.gte' => date('Y') . '-01-01', // This year
                 'sort_by' => 'popularity.desc',
                 'page' => $page
@@ -376,16 +397,17 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get upcoming season anime (TMDB upcoming animation)
+     * Get upcoming season anime (TMDB upcoming animation from Asia)
      */
     public function seasonUpcoming(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            // Get upcoming animation shows
+            // Get upcoming animation shows from Japan/Asia
             $results = $this->tmdbService->discoverTV([
                 'with_genres' => 16, // Animation genre
+                'with_origin_country' => 'JP|KR|CN|TW|HK|TH',
                 'first_air_date.gte' => date('Y-m-d'), // From today onwards
                 'sort_by' => 'first_air_date.asc',
                 'page' => $page
