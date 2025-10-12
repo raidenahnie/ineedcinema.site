@@ -1,2 +1,23 @@
+# robots.txt for iNeedCinema
+# Content aggregator - Not hosting any files
+
 User-agent: *
-Disallow:
+Allow: /
+Allow: /movies
+Allow: /tv-shows
+Allow: /anime
+Allow: /search
+
+# Prevent indexing of streaming player pages (dynamic content from third parties)
+Disallow: /watch/
+Disallow: /api/
+
+# Legal pages
+Allow: /terms
+Allow: /privacy
+
+# Crawl delay to prevent server overload
+Crawl-delay: 1
+
+# Sitemap
+Sitemap: https://ineedcinema.site/sitemap.xml

@@ -16,6 +16,25 @@ Route::get('/tv-shows', [TVShowController::class, 'index'])->name('tv-shows');
 Route::get('/anime', [AnimeController::class, 'index'])->name('anime');
 Route::get('/search', [MovieController::class, 'searchPage'])->name('search');
 
+// Legal Pages
+Route::get('/terms', function () {
+    return view('legal.terms');
+})->name('terms');
+
+Route::get('/privacy', function () {
+    return view('legal.privacy');
+})->name('privacy');
+
+// Contact Page
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+// Support Page
+Route::get('/support', function () {
+    return view('support');
+})->name('support');
+
 Route::get('/test', function () {
     return response()->json(['status' => 'working']);
 });

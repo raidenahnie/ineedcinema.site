@@ -2,6 +2,523 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ==========================================
+   COMPREHENSIVE MOBILE-FIRST OPTIMIZATION
+   Target: iPhone SE (320px) and all mobile devices
+   ========================================== */
+
+/* Base mobile viewport and font sizes */
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    body {
+        font-size: 14px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    @media (min-width: 768px) {
+        body {
+            font-size: 16px;
+        }
+    }
+}
+
+/* ==========================================
+   VIDEO PLAYER MOBILE OPTIMIZATION (PRIORITY)
+   ========================================== */
+
+/* Ensure video containers don't use viewport height on mobile */
+@layer utilities {
+    /* Remove any h-screen classes on mobile for video players */
+    @media (max-width: 767px) {
+        .mobile-video-container {
+            height: auto !important;
+            min-height: unset !important;
+        }
+    }
+    
+    /* Aspect ratio for responsive video */
+    .video-aspect-ratio {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 aspect ratio */
+    }
+    
+    .video-aspect-ratio iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Optimize for landscape mode on mobile */
+    @media (max-width: 767px) and (orientation: landscape) {
+        .video-aspect-ratio {
+            padding-top: 75vh; /* Use 75% of viewport height in landscape */
+        }
+    }
+}
+
+/* ==========================================
+   MODAL MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Ensure modals fit on small screens */
+@layer components {
+    .mobile-modal {
+        max-width: calc(100vw - 1.5rem) !important;
+        max-height: calc(100vh - 3rem);
+        overflow-y: auto;
+    }
+    
+    @media (max-width: 375px) {
+        .mobile-modal {
+            max-width: calc(100vw - 1rem) !important;
+        }
+    }
+}
+
+/* ==========================================
+   TOUCH TARGET OPTIMIZATION
+   ========================================== */
+
+/* Ensure all interactive elements are at least 44x44px */
+@layer utilities {
+    .touch-manipulation {
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Minimum touch target size */
+    button, 
+    a, 
+    [onclick], 
+    [role="button"],
+    input[type="submit"],
+    input[type="button"],
+    select {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    /* Exception for text links in paragraphs */
+    p a, 
+    li a {
+        min-width: unset;
+        min-height: unset;
+        display: inline;
+    }
+}
+
+/* ==========================================
+   TYPOGRAPHY MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Responsive font sizes for mobile */
+@layer base {
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+        line-height: 1.4;
+    }
+    
+    @media (min-width: 768px) {
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+        }
+    }
+}
+
+/* ==========================================
+   GRID AND LAYOUT MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Ensure grids stack properly on mobile */
+@layer utilities {
+    /* Content grids */
+    @media (max-width: 640px) {
+        .movie-grid,
+        .tv-grid,
+        .anime-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.75rem !important;
+        }
+    }
+    
+    /* Episode grids */
+    @media (max-width: 640px) {
+        .episode-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.5rem !important;
+        }
+    }
+}
+
+/* ==========================================
+   CONTAINER AND PADDING MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Reduce padding on mobile for more content space */
+@layer utilities {
+    @media (max-width: 640px) {
+        .container {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem;
+        }
+        
+        /* Tighter spacing for sections */
+        .section-padding {
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+    }
+    
+    @media (min-width: 641px) {
+        .section-padding {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+    }
+}
+
+/* ==========================================
+   IMAGE AND POSTER MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Responsive poster sizes */
+@layer utilities {
+    .poster-image {
+        object-fit: cover;
+        border-radius: 0.5rem;
+    }
+    
+    @media (max-width: 640px) {
+        .poster-image {
+            height: 16rem; /* 256px - smaller on mobile */
+        }
+    }
+    
+    @media (min-width: 641px) {
+        .poster-image {
+            height: 20rem; /* 320px */
+        }
+    }
+    
+    @media (min-width: 768px) {
+        .poster-image {
+            height: 24rem; /* 384px */
+        }
+    }
+}
+
+/* ==========================================
+   NAVIGATION MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Mobile header optimization */
+@layer components {
+    @media (max-width: 767px) {
+        header {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* Make nav links easier to tap on mobile */
+        nav a {
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+        }
+    }
+    
+    /* Landscape mode header optimization */
+    @media (max-width: 767px) and (orientation: landscape) {
+        header {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
+        }
+    }
+}
+
+/* ==========================================
+   FOOTER MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Stack footer columns on mobile */
+@layer components {
+    @media (max-width: 767px) {
+        footer .grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+        
+        footer {
+            padding-top: 2rem;
+            padding-bottom: env(safe-area-inset-bottom, 1rem);
+        }
+    }
+}
+
+/* ==========================================
+   FORM MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Optimize form inputs for mobile */
+@layer components {
+    input,
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevent zoom on iOS */
+        -webkit-appearance: none;
+        border-radius: 0.75rem;
+    }
+    
+    @media (max-width: 640px) {
+        input,
+        textarea,
+        select {
+            padding: 0.875rem;
+        }
+    }
+    
+    /* Mobile-friendly file input */
+    input[type="file"] {
+        padding: 0.75rem;
+    }
+}
+
+/* ==========================================
+   SAFE AREA OPTIMIZATION (NOTCHES, ETC.)
+   ========================================== */
+
+/* Handle iPhone notches and safe areas */
+@layer utilities {
+    .safe-top {
+        padding-top: env(safe-area-inset-top);
+    }
+    
+    .safe-bottom {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+    
+    .safe-left {
+        padding-left: env(safe-area-inset-left);
+    }
+    
+    .safe-right {
+        padding-right: env(safe-area-inset-right);
+    }
+}
+
+/* ==========================================
+   SCROLL AND OVERFLOW MOBILE OPTIMIZATION
+   ========================================== */
+
+/* Smooth scrolling and overflow handling */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+        overflow-x: hidden;
+    }
+    
+    body {
+        overflow-x: hidden;
+        position: relative;
+    }
+    
+    /* Momentum scrolling on iOS */
+    .overflow-y-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* ==========================================
+   LANDSCAPE MODE OPTIMIZATION
+   ========================================== */
+
+/* Special handling for landscape mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+    /* Reduce vertical spacing in landscape */
+    .landscape-compact {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+    
+    /* Make modals scrollable in landscape */
+    .mobile-modal {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+}
+
+/* ==========================================
+   TEXT CLIPPING AND TRUNCATION
+   ========================================== */
+
+/* Line clamp utilities for mobile */
+@layer utilities {
+    .line-clamp-1 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+    }
+    
+    .line-clamp-2 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .line-clamp-3 {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+}
+
+/* ==========================================
+   PERFORMANCE OPTIMIZATION
+   ========================================== */
+
+/* Hardware acceleration for animations */
+@layer utilities {
+    .gpu-accelerated {
+        transform: translateZ(0);
+        will-change: transform;
+    }
+    
+    /* Smooth transitions */
+    .smooth-transition {
+        transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+}
+
+/* ==========================================
+   LOADING AND SKELETON SCREENS
+   ========================================== */
+
+/* Loading states optimized for mobile */
+@layer components {
+    .skeleton {
+        background: linear-gradient(
+            90deg,
+            #374151 0%,
+            #4B5563 50%,
+            #374151 100%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes skeleton-loading {
+        0% {
+            background-position: 200% 0;
+        }
+        100% {
+            background-position: -200% 0;
+        }
+    }
+}
+
+/* ==========================================
+   ACCESSIBILITY MOBILE ENHANCEMENTS
+   ========================================== */
+
+/* Focus states for keyboard navigation */
+@layer base {
+    *:focus-visible {
+        outline: 2px solid #3B82F6;
+        outline-offset: 2px;
+    }
+    
+    /* Reduce motion for users who prefer it */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* ==========================================
+   UTILITY HELPERS
+   ========================================== */
+
+/* Hide scrollbar but keep functionality */
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Prevent text selection for UI elements */
+.no-select {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* ==========================================
+   IPHONE SE SPECIFIC FIXES (320px)
+   ========================================== */
+
+@media (max-width: 375px) {
+    /* Extra tight spacing for smallest screens */
+    .xs-compact {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+    
+    /* Smaller text on iPhone SE */
+    .xs-text-sm {
+        font-size: 0.75rem !important;
+    }
+    
+    /* Stack elements more aggressively */
+    .xs-stack > * {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
+
 /* Custom Fonts */
 @layer base {
     body {
@@ -412,5 +929,430 @@ img:not([src]) {
 @media (prefers-color-scheme: dark) {
     html {
         color-scheme: dark;
+    }
+}
+
+/* ===================================
+   MOBILE OPTIMIZATIONS
+   =================================== */
+
+/* Touch-friendly tap targets (minimum 44x44px) */
+@media (max-width: 768px) {
+    button,
+    a,
+    input[type="button"],
+    input[type="submit"],
+    .clickable {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Navigation menu items */
+    .nav-link {
+        padding: 1rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    /* Cards on mobile */
+    .movie-card,
+    .card {
+        touch-action: manipulation;
+    }
+    
+    /* Prevent zoom on input focus (iOS) */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+    
+    /* Mobile header adjustments */
+    header nav {
+        padding: 0.75rem 1rem;
+    }
+    
+    /* Logo size on mobile */
+    .logo {
+        font-size: 1.25rem;
+    }
+    
+    /* Mobile search input */
+    #mobileSearchInput {
+        font-size: 16px;
+        padding: 0.875rem 1rem 0.875rem 2.75rem;
+    }
+    
+    /* Footer columns stack on mobile */
+    footer .grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    /* Adjust padding for mobile */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Hero section mobile */
+    .hero-title {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.875rem;
+    }
+    
+    /* Section titles mobile */
+    .section-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Movie grid mobile - 2 columns */
+    .movie-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+    
+    /* Modal adjustments for mobile */
+    .modal-content {
+        max-width: calc(100vw - 2rem);
+        margin: 1rem;
+    }
+    
+    /* Toast notifications mobile */
+    .toast {
+        right: 1rem;
+        top: 1rem;
+        left: 1rem;
+        max-width: calc(100vw - 2rem);
+    }
+    
+    /* Search results dropdown mobile */
+    #searchResults {
+        max-height: 70vh;
+        left: -1rem;
+        right: -1rem;
+    }
+    
+    /* Video player mobile */
+    .video-player {
+        aspect-ratio: 16/9;
+        height: auto;
+    }
+    
+    /* Button text size */
+    .btn-primary,
+    .btn-secondary {
+        font-size: 0.875rem;
+        padding: 0.75rem 1.25rem;
+    }
+    
+    /* Form inputs mobile */
+    .form-input,
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        font-size: 16px;
+        padding: 0.875rem 1rem;
+    }
+    
+    /* Table responsive */
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    /* Hide desktop elements on mobile */
+    .hide-on-mobile {
+        display: none !important;
+    }
+    
+    /* Show mobile elements */
+    .show-on-mobile {
+        display: block !important;
+    }
+}
+
+/* Tablet optimizations (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .movie-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    
+    footer .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    
+    .container {
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+}
+
+/* Small mobile devices (320px - 375px) */
+@media (max-width: 375px) {
+    .hero-title {
+        font-size: 1.75rem;
+    }
+    
+    .movie-grid {
+        gap: 0.5rem;
+    }
+    
+    .logo {
+        font-size: 1.125rem;
+    }
+    
+    /* Smaller buttons on very small screens */
+    .btn-primary,
+    .btn-secondary {
+        font-size: 0.8125rem;
+        padding: 0.625rem 1rem;
+    }
+}
+
+/* Landscape orientation mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+    header nav {
+        padding: 0.5rem 1rem;
+    }
+    
+    .hero-section {
+        min-height: 80vh;
+    }
+    
+    /* Reduce vertical spacing in landscape */
+    .mt-20 {
+        margin-top: 3rem;
+    }
+    
+    .mb-12 {
+        margin-bottom: 2rem;
+    }
+}
+
+/* Safe area insets for notched devices (iPhone X, etc.) */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+    }
+    
+    header {
+        padding-top: max(0px, env(safe-area-inset-top));
+    }
+    
+    footer {
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Prevent text size adjustment on iOS */
+@supports (-webkit-touch-callout: none) {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+}
+
+/* Remove tap highlight on mobile */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth scrolling for mobile */
+@media (max-width: 768px) {
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Card improvements for mobile touch */
+@media (max-width: 768px) {
+    .movie-card {
+        transition: transform 0.2s ease;
+    }
+    
+    .movie-card:active {
+        transform: scale(0.95);
+    }
+    
+    /* Remove hover effects on touch devices */
+    @media (hover: none) {
+        .movie-card:hover {
+            transform: none;
+        }
+        
+        .card-hover:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .hover-lift:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    }
+}
+
+/* Improve readability on mobile */
+@media (max-width: 768px) {
+    body {
+        font-size: 0.9375rem;
+        line-height: 1.6;
+    }
+    
+    p {
+        margin-bottom: 1rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        line-height: 1.3;
+    }
+    
+    h3 {
+        font-size: 1.25rem;
+        line-height: 1.4;
+    }
+}
+
+/* Loading spinner mobile */
+@media (max-width: 768px) {
+    .loading-spinner {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* Image optimization for mobile */
+@media (max-width: 768px) {
+    img {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .movie-card img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+}
+
+/* Footer mobile optimization */
+@media (max-width: 768px) {
+    footer {
+        padding: 2rem 1rem;
+    }
+    
+    footer h3 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+    
+    footer ul {
+        margin-bottom: 2rem;
+    }
+    
+    footer a {
+        font-size: 0.9375rem;
+    }
+}
+
+/* Mobile menu improvements */
+@media (max-width: 1024px) {
+    #mobileMenu {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+    
+    #mobileMenu:not(.hidden) {
+        max-height: 500px;
+    }
+    
+    #mobileSearch {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
+    
+    #mobileSearch:not(.hidden) {
+        max-height: 100px;
+    }
+}
+
+/* Contact form mobile */
+@media (max-width: 768px) {
+    .contact-form {
+        padding: 1.5rem;
+    }
+    
+    .contact-form input,
+    .contact-form textarea {
+        font-size: 16px;
+    }
+}
+
+/* Accessibility improvements for mobile */
+@media (max-width: 768px) {
+    /* Focus visible improvements */
+    *:focus-visible {
+        outline: 3px solid #ef4444;
+        outline-offset: 3px;
+    }
+    
+    /* Skip to content link for screen readers */
+    .skip-to-content {
+        position: absolute;
+        left: -9999px;
+        z-index: 999;
+        padding: 1rem;
+        background-color: #ef4444;
+        color: white;
+        text-decoration: none;
+    }
+    
+    .skip-to-content:focus {
+        left: 50%;
+        transform: translateX(-50%);
+        top: 1rem;
+    }
+}
+
+/* Performance optimization for mobile */
+@media (max-width: 768px) {
+    /* Reduce animations on slower devices */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+    }
+    
+    /* Hardware acceleration for smooth animations */
+    .movie-card,
+    .card-hover,
+    .hover-lift {
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        will-change: transform;
     }
 }

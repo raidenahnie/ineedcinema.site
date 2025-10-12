@@ -2,11 +2,45 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="theme-color" content="#1f2937">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <title>@yield('title', 'iNeedCinema - My Personal Movie Collection')</title>
-    <meta name="description" content="@yield('description', 'My personal cinema collection. Organize, browse, and enjoy my favorite movies and TV series.')"
+    <!-- SEO Meta Tags -->
+    <title>@yield('title', 'iNeedCinema - Stream Movies, TV Shows & Anime Online')</title>
+    <meta name="description" content="@yield('description', 'Discover and stream movies, TV shows, and anime. Browse through thousands of titles with an intuitive interface. Content aggregated from third-party sources.')">
+    <meta name="keywords" content="@yield('keywords', 'movies, tv shows, anime, streaming, watch online, cinema, entertainment, TMDB')">
+    <meta name="author" content="iNeedCinema">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Legal & Disclaimer Meta Tags -->
+    <meta name="disclaimer" content="iNeedCinema does not host any files. All content is provided by third-party services. We do not own or distribute any content.">
+    <meta name="copyright" content="All content belongs to their respective owners. Trademarks and logos are property of their respective companies.">
+    
+    <!-- Open Graph / Facebook Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:title" content="@yield('og_title', 'iNeedCinema - Stream Movies, TV Shows & Anime')">
+    <meta property="og:description" content="@yield('og_description', 'Discover and stream movies, TV shows, and anime from third-party sources.')">
+    <meta property="og:image" content="@yield('og_image', asset('images/og-banner.jpg'))">
+    <meta property="og:site_name" content="iNeedCinema">
+    
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="@yield('twitter_title', 'iNeedCinema - Stream Movies, TV Shows & Anime')">
+    <meta name="twitter:description" content="@yield('twitter_description', 'Discover and stream movies, TV shows, and anime from third-party sources.')">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('images/og-banner.jpg'))">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ url()->current() }}">
+    
+    <!-- Additional Legal Meta Tags -->
+    <meta name="rating" content="general">
+    <meta name="referrer" content="no-referrer-when-downgrade">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
@@ -135,9 +169,9 @@
     <!-- Footer -->
     <footer class="bg-gray-900/50 backdrop-blur-xl border-t border-gray-800/50 mt-20">
         <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
                 <!-- Brand -->
-                <div class="lg:col-span-2">
+                <div class="lg:col-span-1">
                     <div class="flex items-center space-x-3 mb-4 group">
                         <div class="w-10 h-10 bg-gradient-to-br from-red-600 via-red-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-red-500/50 transition-all duration-300">
                             <i class="fas fa-play text-white text-lg"></i>
@@ -184,42 +218,56 @@
                             <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             Advanced Search
                         </a></li>
+                        <li><a href="{{ route('support') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            <i class="fas fa-heart text-red-500 mr-1"></i> Support
+                        </a></li>
                     </ul>
                 </div>
                 
-                <!-- Help -->
+                <!-- Contact -->
                 <div>
-                    <h3 class="text-white font-semibold mb-4 text-lg">Support</h3>
+                    <h3 class="text-white font-semibold mb-4 text-lg">Contact</h3>
                     <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center group">
+                        <li><a href="{{ route('contact') }}" class="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            Help Center
+                            <i class="fas fa-envelope text-red-500 mr-2"></i> Contact Us
                         </a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            Contact Us
-                        </a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            Privacy Policy
-                        </a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-red-500 transition-colors duration-200 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i>
-                            Terms of Service
-                        </a></li>
+                        <li class="text-gray-400 text-sm pt-2">
+                            <p class="mb-2">Have questions or feedback?</p>
+                            <p class="text-gray-500 text-xs">We'd love to hear from you!</p>
+                        </li>
                     </ul>
+                </div>
+                
+                <!-- Disclaimer -->
+                <div>
+                    <h3 class="text-white font-semibold mb-4 text-lg">
+                        <i class="fas fa-info-circle text-red-500 mr-2"></i>Disclaimer
+                    </h3>
+                    <div class="text-gray-400 text-sm leading-relaxed space-y-2">
+                        <p>
+                            iNeedCinema does not host any files on its servers. All content is provided by third-party services.
+                        </p>
+                        <p>
+                            We do not own, produce, or distribute any movies, TV shows, or anime displayed on this website.
+                        </p>
+                        <p class="text-gray-500 text-xs mt-3">
+                            All trademarks, logos, and images are property of their respective owners.
+                        </p>
+                    </div>
                 </div>
             </div>
             
             <div class="border-t border-gray-800/50 pt-8">
                 <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <p class="text-gray-500 text-sm">
-                        © {{ date('Y') }} iNeedCinema. All rights reserved.
+                    <p class="text-gray-500 text-sm text-center sm:text-left">
+                        © {{ date('Y') }} iNeedCinema. Content provided via third-party APIs.
                     </p>
-                    <div class="flex items-center gap-6">
-                        <a href="#" class="text-gray-500 hover:text-red-500 text-sm transition-colors">Privacy</a>
-                        <a href="#" class="text-gray-500 hover:text-red-500 text-sm transition-colors">Terms</a>
-                        <a href="#" class="text-gray-500 hover:text-red-500 text-sm transition-colors">Cookies</a>
+                    <div class="flex flex-wrap items-center justify-center gap-4 text-xs">
+                        <a href="{{ route('terms') }}" class="text-gray-500 hover:text-red-500 transition-colors">Terms of Service</a>
+                        <span class="text-gray-700">•</span>
+                        <a href="{{ route('privacy') }}" class="text-gray-500 hover:text-red-500 transition-colors">Privacy Policy</a>
                     </div>
                 </div>
             </div>
