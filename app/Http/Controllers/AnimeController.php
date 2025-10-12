@@ -3,78 +3,73 @@
 namespace App\Http\Controllers;
 
 use App\Services\VidLinkService;
+use App\Services\TMDBService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Http;
 
 class AnimeController extends Controller
 {
     protected VidLinkService $vidlinkService;
+    protected TMDBService $tmdbService;
 
-    public function __construct(VidLinkService $vidlinkService)
+    public function __construct(VidLinkService $vidlinkService, TMDBService $tmdbService)
     {
         $this->vidlinkService = $vidlinkService;
+        $this->tmdbService = $tmdbService;
     }
 
     /**
-     * Search for anime using Jikan API (free MyAnimeList API)
+     * Search for anime using TMDB (anime are TV shows with Animation genre)
      */
     public function search(Request $request): JsonResponse
     {
         $request->validate([
-            'query' => 'required|string|min:1|max:255',
+            'q' => 'required|string|min:1|max:255',
             'page' => 'sometimes|integer|min:1|max:100'
         ]);
 
-        $query = $request->input('query');
+        $query = $request->input('q');
         $page = $request->input('page', 1);
 
         try {
-            $response = Http::get('https://api.jikan.moe/v4/anime', [
-                'q' => $query,
-                'page' => $page,
-                'limit' => 25
-            ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
+            // Search TMDB for TV shows
+            $results = $this->tmdbService->searchTVShows($query, $page);
+            
+            // Filter for anime (animation genre - genre_id: 16)
+            if (isset($results['results'])) {
+                $results['results'] = array_filter($results['results'], function($show) {
+                    return isset($show['genre_ids']) && in_array(16, $show['genre_ids']);
+                });
                 
-                // Process results to add VidLink streaming URLs
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$anime) {
-                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
-                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
-                    }
+                // Re-index array after filtering
+                $results['results'] = array_values($results['results']);
+                
+                // Add streaming URLs
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Failed to fetch anime data'], 500);
+            return response()->json($results);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Search service unavailable'], 503);
+            return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Get anime details by MAL ID
+     * Get anime details by TMDB ID
      */
     public function show(int $id): JsonResponse
     {
         try {
-            $response = Http::get("https://api.jikan.moe/v4/anime/{$id}");
-
-            if ($response->successful()) {
-                $anime = $response->json()['data'];
-                
-                // Add VidLink streaming information
+            $anime = $this->tmdbService->getTVShowDetails($id);
+            
+            if ($anime) {
+                // Add streaming information
                 $anime['streaming'] = [
-                    'sub' => $this->vidlinkService->getAnimeStreamUrl($id, 1, true),
-                    'dub' => $this->vidlinkService->getAnimeStreamUrl($id, 1, false),
-                    'sub_fallback' => $this->vidlinkService->getAnimeStreamUrlWithFallback($id, 1, true),
-                    'dub_fallback' => $this->vidlinkService->getAnimeStreamUrlWithFallback($id, 1, false),
+                    'url' => $this->vidlinkService->getTVStreamUrl($id, 1, 1),
                 ];
-
+                
                 return response()->json($anime);
             }
 
@@ -85,131 +80,185 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get popular anime
+     * Get popular anime (using TMDB Animation genre)
      */
     public function popular(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            $response = Http::get('https://api.jikan.moe/v4/top/anime', [
-                'page' => $page,
-                'limit' => 25
+            // Get popular TV shows with Animation genre (16)
+            $results = $this->tmdbService->discoverTV([
+                'with_genres' => 16, // Animation
+                'sort_by' => 'popularity.desc',
+                'page' => $page
             ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Process results to add streaming URLs
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$anime) {
-                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
-                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
-                    }
+            
+            // Add streaming URLs
+            if (isset($results['results'])) {
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Failed to fetch popular anime'], 500);
+            return response()->json($results);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Get anime by genre
+     * Get anime by genre (TMDB genre IDs)
      */
     public function byGenre(Request $request, int $genreId): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            $response = Http::get('https://api.jikan.moe/v4/anime', [
-                'genres' => $genreId,
-                'page' => $page,
-                'limit' => 25
+            // Get TV shows with Animation (16) + specified genre
+            $results = $this->tmdbService->discoverTV([
+                'with_genres' => "16,{$genreId}", // Animation + specified genre
+                'sort_by' => 'popularity.desc',
+                'page' => $page
             ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Process results to add streaming URLs
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$anime) {
-                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
-                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
-                    }
+            
+            // Add streaming URLs
+            if (isset($results['results'])) {
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Failed to fetch anime by genre'], 500);
+            return response()->json([
+                'success' => true,
+                'data' => $results['results'] ?? [],
+                'pagination' => [
+                    'current_page' => $results['page'] ?? 1,
+                    'total_pages' => $results['total_pages'] ?? 1,
+                    'total_results' => $results['total_results'] ?? 0
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Get anime genres
+     * Get anime genres (TMDB TV genres)
      */
     public function genres(): JsonResponse
     {
         try {
-            $response = Http::get('https://api.jikan.moe/v4/genres/anime');
+            // Return TMDB TV genres - these can be combined with Animation (16)
+            $genres = [
+                ['id' => 16, 'name' => 'Animation'],
+                ['id' => 10759, 'name' => 'Action & Adventure'],
+                ['id' => 35, 'name' => 'Comedy'],
+                ['id' => 18, 'name' => 'Drama'],
+                ['id' => 10751, 'name' => 'Family'],
+                ['id' => 10762, 'name' => 'Kids'],
+                ['id' => 9648, 'name' => 'Mystery'],
+                ['id' => 10765, 'name' => 'Sci-Fi & Fantasy'],
+                ['id' => 10768, 'name' => 'War & Politics'],
+                ['id' => 37, 'name' => 'Western']
+            ];
 
-            if ($response->successful()) {
-                return response()->json($response->json());
-            }
-
-            return response()->json(['error' => 'Failed to fetch genres'], 500);
+            return response()->json([
+                'success' => true,
+                'data' => $genres
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Stream anime
+     * Get filtered anime (TMDB-based)
+     */
+    public function filter(Request $request): JsonResponse
+    {
+        $page = $request->input('page', 1);
+        $genres = $request->input('genres'); // TMDB genre IDs
+        $sortBy = $request->input('sort_by', 'popularity.desc');
+        $year = $request->input('year');
+        $minRating = $request->input('min_rating');
+
+        try {
+            $params = [
+                'with_genres' => 16, // Always include Animation
+                'sort_by' => $sortBy,
+                'page' => $page
+            ];
+
+            // Add additional genre filters
+            if ($genres) {
+                $params['with_genres'] = "16,{$genres}"; // Combine Animation with other genres
+            }
+
+            // Add year filter
+            if ($year) {
+                $params['first_air_date_year'] = $year;
+            }
+
+            // Add rating filter
+            if ($minRating) {
+                $params['vote_average.gte'] = $minRating;
+            }
+
+            $results = $this->tmdbService->discoverTV($params);
+            
+            // Add streaming URLs
+            if (isset($results['results'])) {
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'data' => $results['results'] ?? [],
+                'pagination' => [
+                    'current_page' => $results['page'] ?? 1,
+                    'total_pages' => $results['total_pages'] ?? 1,
+                    'total_results' => $results['total_results'] ?? 0
+                ]
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Service unavailable'], 503);
+        }
+    }
+
+    /**
+     * Stream anime (using TMDB TV show ID)
      */
     public function stream(string $id, Request $request)
     {
         $episode = $request->input('episode', 1);
-        $type = $request->input('type', 'sub'); // 'sub' or 'dub'
-        $fallback = $request->input('fallback', false);
+        $season = $request->input('season', 1);
 
         try {
-            // Get anime details from Jikan API
-            $response = Http::get("https://api.jikan.moe/v4/anime/{$id}");
+            // Get TV show details from TMDB (id is now TMDB ID directly)
+            $anime = $this->tmdbService->getTVShowDetails($id);
             
-            if (!$response->successful()) {
+            if (!$anime) {
                 abort(404, 'Anime not found');
             }
-
-            $responseData = $response->json();
             
-            if (!isset($responseData['data'])) {
-                abort(404, 'Anime data not found');
+            // Get season details with episodes
+            $seasonDetails = $this->tmdbService->getTVShowSeasonDetails($id, (int)$season);
+            
+            // Generate VidLink URL using TMDB TV show ID
+            $embedUrl = $this->vidlinkService->getTVStreamUrl($id, (int)$season, (int)$episode);
+            
+            $currentEpisode = null;
+            $episodes = [];
+            
+            if ($seasonDetails && isset($seasonDetails['episodes'])) {
+                $episodes = $seasonDetails['episodes'];
+                $currentEpisode = collect($episodes)->firstWhere('episode_number', (int)$episode);
             }
             
-            $anime = $responseData['data'];
-            
-            // Generate VidLink embed URL
-            if ($fallback) {
-                $embedUrl = $this->vidlinkService->getAnimeStreamUrlWithFallback(
-                    (int)$id, 
-                    (int)$episode, 
-                    $type === 'sub'
-                );
-            } else {
-                $embedUrl = $this->vidlinkService->getAnimeStreamUrl(
-                    (int)$id, 
-                    (int)$episode, 
-                    $type === 'sub'
-                );
-            }
-            
-            return view('stream.anime', compact('anime', 'embedUrl', 'episode', 'type'));
+            return view('stream.anime', compact('anime', 'embedUrl', 'episode', 'season', 'currentEpisode', 'episodes'));
         } catch (\Exception $e) {
             abort(404, 'Anime not found or streaming not available: ' . $e->getMessage());
         }
@@ -233,7 +282,7 @@ class AnimeController extends Controller
     }
 
     /**
-     * Get top anime
+     * Get top anime (TMDB top-rated animation)
      */
     public function top(Request $request): JsonResponse
     {
@@ -242,128 +291,164 @@ class AnimeController extends Controller
 
         try {
             $params = [
-                'page' => $page,
-                'limit' => 25
+                'with_genres' => 16, // Animation genre
+                'page' => $page
             ];
 
-            if ($filter) {
-                $params['filter'] = $filter;
+            // Map filters to TMDB sorting
+            switch ($filter) {
+                case 'airing':
+                    $params['sort_by'] = 'first_air_date.desc';
+                    $params['air_date.lte'] = date('Y-m-d');
+                    break;
+                case 'upcoming':
+                    $params['sort_by'] = 'first_air_date.asc';
+                    $params['air_date.gte'] = date('Y-m-d');
+                    break;
+                case 'bypopularity':
+                    $params['sort_by'] = 'popularity.desc';
+                    break;
+                case 'favorite':
+                default:
+                    $params['sort_by'] = 'vote_average.desc';
+                    $params['vote_count.gte'] = 100; // Minimum votes for relevance
+                    break;
             }
 
-            $response = Http::get('https://api.jikan.moe/v4/top/anime', $params);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Process results to add streaming URLs
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$anime) {
-                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
-                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
-                    }
+            $results = $this->tmdbService->discoverTV($params);
+            
+            // Add streaming URLs
+            if (isset($results['results'])) {
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Failed to fetch top anime'], 500);
+            return response()->json([
+                'success' => true,
+                'data' => $results['results'] ?? [],
+                'pagination' => [
+                    'current_page' => $results['page'] ?? 1,
+                    'total_pages' => $results['total_pages'] ?? 1,
+                    'total_results' => $results['total_results'] ?? 0
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Get current season anime
+     * Get current season anime (TMDB recent animation)
      */
     public function seasonNow(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            $response = Http::get('https://api.jikan.moe/v4/seasons/now', [
-                'page' => $page,
-                'limit' => 25
+            // Get animation shows from this year
+            $results = $this->tmdbService->discoverTV([
+                'with_genres' => 16, // Animation genre
+                'first_air_date.gte' => date('Y') . '-01-01', // This year
+                'sort_by' => 'popularity.desc',
+                'page' => $page
             ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Process results to add streaming URLs
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$anime) {
-                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
-                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
-                    }
+            
+            // Add streaming URLs
+            if (isset($results['results'])) {
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Failed to fetch current season anime'], 500);
+            return response()->json([
+                'success' => true,
+                'data' => $results['results'] ?? [],
+                'pagination' => [
+                    'current_page' => $results['page'] ?? 1,
+                    'total_pages' => $results['total_pages'] ?? 1,
+                    'total_results' => $results['total_results'] ?? 0
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Get upcoming season anime
+     * Get upcoming season anime (TMDB upcoming animation)
      */
     public function seasonUpcoming(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
 
         try {
-            $response = Http::get('https://api.jikan.moe/v4/seasons/upcoming', [
-                'page' => $page,
-                'limit' => 25
+            // Get upcoming animation shows
+            $results = $this->tmdbService->discoverTV([
+                'with_genres' => 16, // Animation genre
+                'first_air_date.gte' => date('Y-m-d'), // From today onwards
+                'sort_by' => 'first_air_date.asc',
+                'page' => $page
             ]);
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Process results to add streaming URLs
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$anime) {
-                        $anime['streaming_url'] = $this->vidlinkService->getAnimeStreamUrl($anime['mal_id'], 1);
-                        $anime['streaming_url_fallback'] = $this->vidlinkService->getAnimeStreamUrlWithFallback($anime['mal_id'], 1);
-                    }
+            
+            // Add streaming URLs
+            if (isset($results['results'])) {
+                foreach ($results['results'] as &$show) {
+                    $show['streaming_url'] = $this->vidlinkService->getTVStreamUrl($show['id'], 1, 1);
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Failed to fetch upcoming anime'], 500);
+            return response()->json([
+                'success' => true,
+                'data' => $results['results'] ?? [],
+                'pagination' => [
+                    'current_page' => $results['page'] ?? 1,
+                    'total_pages' => $results['total_pages'] ?? 1,
+                    'total_results' => $results['total_results'] ?? 0
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }
     }
 
     /**
-     * Get anime episodes (if available from API)
+     * Get anime episodes from TMDB (TV show seasons/episodes)
      */
     public function episodes(int $id): JsonResponse
     {
         try {
-            $response = Http::get("https://api.jikan.moe/v4/anime/{$id}/episodes");
-
-            if ($response->successful()) {
-                $data = $response->json();
-                
-                // Add streaming URLs for each episode
-                if (isset($data['data'])) {
-                    foreach ($data['data'] as &$episode) {
-                        $episodeNumber = $episode['mal_id'] ?? 1;
-                        $episode['streaming'] = [
-                            'sub' => $this->vidlinkService->getAnimeStreamUrl($id, $episodeNumber, true),
-                            'dub' => $this->vidlinkService->getAnimeStreamUrl($id, $episodeNumber, false),
-                        ];
-                    }
+            // Get TV show details from TMDB
+            $show = $this->tmdbService->getTVShowDetails($id);
+            
+            if (!$show || !isset($show['seasons'])) {
+                return response()->json(['error' => 'Episodes not found'], 404);
+            }
+            
+            // Format seasons and episodes data
+            $seasonsData = [];
+            foreach ($show['seasons'] as $season) {
+                if ($season['season_number'] > 0) { // Skip specials (season 0)
+                    $seasonsData[] = [
+                        'season_number' => $season['season_number'],
+                        'episode_count' => $season['episode_count'],
+                        'name' => $season['name'],
+                        'air_date' => $season['air_date'] ?? null,
+                        'poster_path' => $season['poster_path'] ? $this->tmdbService->getImageUrl($season['poster_path']) : null,
+                    ];
                 }
-
-                return response()->json($data);
             }
 
-            return response()->json(['error' => 'Episodes not found'], 404);
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'id' => $show['id'],
+                    'name' => $show['name'],
+                    'seasons' => $seasonsData,
+                    'number_of_seasons' => $show['number_of_seasons'] ?? 0,
+                    'number_of_episodes' => $show['number_of_episodes'] ?? 0,
+                ]
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Service unavailable'], 503);
         }

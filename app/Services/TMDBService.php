@@ -387,4 +387,236 @@ class TMDBService
             }
         });
     }
+
+    /**
+     * Get TV shows airing today
+     */
+    public function getAiringTodayTVShows(int $page = 1): array
+    {
+        $cacheKey = "tmdb_airing_today_tv_page_{$page}";
+        
+        return Cache::remember($cacheKey, 1800, function () use ($page) { // 30 min cache
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/tv/airing_today", [
+                    'page' => $page,
+                ]);
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['results' => []];
+            } catch (\Exception $e) {
+                Log::error('TMDB Airing Today TV Shows Exception', ['error' => $e->getMessage()]);
+                return ['results' => []];
+            }
+        });
+    }
+
+    /**
+     * Get TV shows currently on the air
+     */
+    public function getOnTheAirTVShows(int $page = 1): array
+    {
+        $cacheKey = "tmdb_on_the_air_tv_page_{$page}";
+        
+        return Cache::remember($cacheKey, 1800, function () use ($page) { // 30 min cache
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/tv/on_the_air", [
+                    'page' => $page,
+                ]);
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['results' => []];
+            } catch (\Exception $e) {
+                Log::error('TMDB On The Air TV Shows Exception', ['error' => $e->getMessage()]);
+                return ['results' => []];
+            }
+        });
+    }
+
+    /**
+     * Get TV shows by genre
+     */
+    public function getTVShowsByGenre(int $genreId, int $page = 1): array
+    {
+        $cacheKey = "tmdb_tv_genre_{$genreId}_page_{$page}";
+        
+        return Cache::remember($cacheKey, 3600, function () use ($genreId, $page) {
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/discover/tv", [
+                    'with_genres' => $genreId,
+                    'page' => $page,
+                    'sort_by' => 'popularity.desc'
+                ]);
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['results' => []];
+            } catch (\Exception $e) {
+                Log::error('TMDB TV Shows by Genre Exception', ['error' => $e->getMessage(), 'genre_id' => $genreId]);
+                return ['results' => []];
+            }
+        });
+    }
+
+    /**
+     * Search for movies only
+     */
+    public function searchMovies(string $query, int $page = 1): array
+    {
+        $cacheKey = "tmdb_search_movies_" . md5($query) . "_page_{$page}";
+        
+        return Cache::remember($cacheKey, 1800, function () use ($query, $page) {
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/search/movie", [
+                    'query' => $query,
+                    'page' => $page,
+                ]);
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['results' => []];
+            } catch (\Exception $e) {
+                Log::error('TMDB Movie Search Exception', ['error' => $e->getMessage(), 'query' => $query]);
+                return ['results' => []];
+            }
+        });
+    }
+
+    /**
+     * Search for TV shows only
+     */
+    public function searchTVShows(string $query, int $page = 1): array
+    {
+        $cacheKey = "tmdb_search_tv_" . md5($query) . "_page_{$page}";
+        
+        return Cache::remember($cacheKey, 1800, function () use ($query, $page) {
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/search/tv", [
+                    'query' => $query,
+                    'page' => $page,
+                ]);
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['results' => []];
+            } catch (\Exception $e) {
+                Log::error('TMDB TV Search Exception', ['error' => $e->getMessage(), 'query' => $query]);
+                return ['results' => []];
+            }
+        });
+    }
+
+    /**
+     * Search for anime by title in TMDB to get TV show ID
+     * This is used to find the TMDB ID for anime that we get from MAL
+     */
+    public function searchAnimeByTitle(string $title): ?array
+    {
+        $cacheKey = "tmdb_anime_search_" . md5($title);
+        
+        return Cache::remember($cacheKey, 3600, function () use ($title) {
+            try {
+                // Search for the anime as a TV show
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/search/tv", [
+                    'query' => $title,
+                    'page' => 1,
+                ]);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+                    if (!empty($data['results'])) {
+                        // Return the first result (most relevant)
+                        return $data['results'][0];
+                    }
+                }
+
+                return null;
+            } catch (\Exception $e) {
+                Log::error('TMDB Anime Search Exception', ['error' => $e->getMessage(), 'title' => $title]);
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Get TV show external IDs to find if it has MAL ID
+     */
+    public function getTVExternalIds(int $tvId): array
+    {
+        $cacheKey = "tmdb_tv_external_ids_{$tvId}";
+        
+        return Cache::remember($cacheKey, 86400, function () use ($tvId) {
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/tv/{$tvId}/external_ids");
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return [];
+            } catch (\Exception $e) {
+                Log::error('TMDB TV External IDs Exception', ['error' => $e->getMessage(), 'tvId' => $tvId]);
+                return [];
+            }
+        });
+    }
+
+    /**
+     * Discover TV shows with filters
+     */
+    public function discoverTV(array $params = []): array
+    {
+        $cacheKey = "tmdb_discover_tv_" . md5(json_encode($params));
+        
+        return Cache::remember($cacheKey, 1800, function () use ($params) {
+            try {
+                $response = Http::withoutVerifying()->withHeaders([
+                    'Authorization' => 'Bearer ' . $this->accessToken,
+                    'Accept' => 'application/json',
+                ])->get("{$this->baseUrl}/discover/tv", $params);
+
+                if ($response->successful()) {
+                    return $response->json();
+                }
+
+                return ['results' => []];
+            } catch (\Exception $e) {
+                Log::error('TMDB Discover TV Exception', ['error' => $e->getMessage(), 'params' => $params]);
+                return ['results' => []];
+            }
+        });
+    }
 }
+

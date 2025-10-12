@@ -19,12 +19,7 @@
     
     <!-- Hero Content -->
     <div class="relative z-20 container mx-auto px-4 text-center">
-        <div class="max-w-4xl mx-auto">
-
-
-            <!--<p>todo: walang laman yung anime, di rin makapag search at need i optimize yung landing page kasi napakahaba</p>-->
-
-            
+        <div class="max-w-4xl mx-auto">            
             <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
                 Unlimited movies, TV shows, and more
             </h1>
@@ -92,357 +87,65 @@
     </div>
 </section>
 
-<!-- Categories Section -->
+<!-- Latest Releases Section -->
 <section class="py-16 bg-gray-950">
     <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Popular on iNeedCinema
-            </h2>
-        </div>
-        
-        <!-- More Movies Grid -->
-        <div id="popular-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Popular movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- TV Shows Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Popular TV Shows
-            </h2>
-        </div>
-        
-        <!-- TV Shows Grid -->
-        <div id="popular-tv" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Popular TV shows will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Anime Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Popular Anime
-            </h2>
-        </div>
-        
-        <!-- Anime Grid -->
-        <div id="popular-anime" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Popular anime will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Latest Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
+        <div class="mb-12 text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
                 Latest Releases
             </h2>
+            <p class="text-gray-400 text-lg">
+                Fresh content added this week
+            </p>
         </div>
         
         <!-- Latest Movies Grid -->
         <div id="latest-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
             <!-- Latest movies will be loaded here dynamically -->
         </div>
+        
+        <div class="text-center mt-12">
+            <a href="{{ route('movies') }}" class="inline-flex items-center text-red-500 hover:text-red-400 font-semibold text-lg transition-colors duration-200">
+                Browse All Movies
+                <i class="fas fa-arrow-right ml-2"></i>
+            </a>
+        </div>
     </div>
 </section>
 
-<!-- Action Movies Section -->
+<!-- Mixed Content Section -->
 <section class="py-16 bg-black">
     <div class="container mx-auto px-4">
-        <div class="mb-12">
+        <div class="mb-12 text-center">
             <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Action Movies
+                Popular This Week
             </h2>
+            <p class="text-gray-400 text-lg">
+                Movies, TV shows, and anime everyone's watching
+            </p>
         </div>
         
-        <!-- Action Movies Grid -->
-        <div id="action-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Action movies will be loaded here dynamically -->
+        <!-- Mixed Popular Content Grid -->
+        <div id="popular-mixed" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
+            <!-- Mixed popular content will be loaded here dynamically -->
+        </div>
+        
+        <div class="text-center mt-12">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <a href="{{ route('tv-shows') }}" class="inline-flex items-center text-blue-400 hover:text-blue-300 font-semibold text-lg transition-colors duration-200">
+                    Explore TV Shows
+                    <i class="fas fa-tv ml-2"></i>
+                </a>
+                <a href="{{ route('anime') }}" class="inline-flex items-center text-purple-400 hover:text-purple-300 font-semibold text-lg transition-colors duration-200">
+                    Discover Anime
+                    <i class="fas fa-star ml-2"></i>
+                </a>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Comedy Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Comedy Movies
-            </h2>
-        </div>
-        
-        <!-- Comedy Movies Grid -->
-        <div id="comedy-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Comedy movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
 
-<!-- Horror Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Horror Movies
-            </h2>
-        </div>
-        
-        <!-- Horror Movies Grid -->
-        <div id="horror-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Horror movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Sci-Fi Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Sci-Fi Movies
-            </h2>
-        </div>
-        
-        <!-- Sci-Fi Movies Grid -->
-        <div id="scifi-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Sci-Fi movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Romance Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Romance Movies
-            </h2>
-        </div>
-        
-        <!-- Romance Movies Grid -->
-        <div id="romance-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Romance movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Animation Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Animation
-            </h2>
-        </div>
-        
-        <!-- Animation Movies Grid -->
-        <div id="animation-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Animation movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Documentary Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Documentaries
-            </h2>
-        </div>
-        
-        <!-- Documentary Grid -->
-        <div id="documentary-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Documentary movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Family Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Family Movies
-            </h2>
-        </div>
-        
-        <!-- Family Movies Grid -->
-        <div id="family-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Family movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Thriller Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Thriller Movies
-            </h2>
-        </div>
-        
-        <!-- Thriller Movies Grid -->
-        <div id="thriller-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Thriller movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Drama Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Drama Movies
-            </h2>
-        </div>
-        
-        <!-- Drama Movies Grid -->
-        <div id="drama-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Drama movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Mystery Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Mystery Movies
-            </h2>
-        </div>
-        
-        <!-- Mystery Movies Grid -->
-        <div id="mystery-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Mystery movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Crime Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Crime Movies
-            </h2>
-        </div>
-        
-        <!-- Crime Movies Grid -->
-        <div id="crime-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Crime movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- War Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                War Movies
-            </h2>
-        </div>
-        
-        <!-- War Movies Grid -->
-        <div id="war-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- War movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Music Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Music Movies
-            </h2>
-        </div>
-        
-        <!-- Music Movies Grid -->
-        <div id="music-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Music movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- History Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                History Movies
-            </h2>
-        </div>
-        
-        <!-- History Movies Grid -->
-        <div id="history-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- History movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Western Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Western Movies
-            </h2>
-        </div>
-        
-        <!-- Western Movies Grid -->
-        <div id="western-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Western movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Adventure Movies Section -->
-<section class="py-16 bg-black">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Adventure Movies
-            </h2>
-        </div>
-        
-        <!-- Adventure Movies Grid -->
-        <div id="adventure-movies" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
-            <!-- Adventure movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
-
-<!-- Fantasy Movies Section -->
-<section class="py-16 bg-gray-950">
-    <div class="container mx-auto px-4">
-        <div class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
-                Fantasy Movies
-            </h2>
-        </div>
-        
-        <!-- Fantasy Movies Grid -->
-        <div id="fantasy-movies" class="grid grid-cols-2 md:grid-cols-4 lg:gap-6">
-            <!-- Fantasy movies will be loaded here dynamically -->
-        </div>
-    </div>
-</section>
 
 @push('scripts')
 <script>
@@ -589,128 +292,7 @@ function showError(containerId, message) {
 }
 </script>
 @endpush
-            <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                <div class="relative overflow-hidden rounded-lg shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                         alt="Movie Poster" 
-                         class="w-full h-64 md:h-80 object-cover group-hover:opacity-80 transition-opacity duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <h3 class="text-white font-semibold text-sm md:text-base mb-1">Sci-Fi Adventure</h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-yellow-400">★ 9.1</span>
-                                <span class="text-gray-300 text-sm">2024</span>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <button class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-300">
-                                <i class="fas fa-play text-white text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Movie Card 3 -->
-            <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                <div class="relative overflow-hidden rounded-lg shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1478720568477-b0ac8a5c9daf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                         alt="Movie Poster" 
-                         class="w-full h-64 md:h-80 object-cover group-hover:opacity-80 transition-opacity duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <h3 class="text-white font-semibold text-sm md:text-base mb-1">Drama Series</h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-yellow-400">★ 8.8</span>
-                                <span class="text-gray-300 text-sm">2024</span>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <button class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-300">
-                                <i class="fas fa-play text-white text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Movie Card 4 -->
-            <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                <div class="relative overflow-hidden rounded-lg shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1440404653325-ab127d49abc1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                         alt="Movie Poster" 
-                         class="w-full h-64 md:h-80 object-cover group-hover:opacity-80 transition-opacity duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <h3 class="text-white font-semibold text-sm md:text-base mb-1">Comedy Special</h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-yellow-400">★ 8.3</span>
-                                <span class="text-gray-300 text-sm">2024</span>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <button class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-300">
-                                <i class="fas fa-play text-white text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Movie Card 5 -->
-            <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                <div class="relative overflow-hidden rounded-lg shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1489599731893-47d9ed96f360?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                         alt="Movie Poster" 
-                         class="w-full h-64 md:h-80 object-cover group-hover:opacity-80 transition-opacity duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <h3 class="text-white font-semibold text-sm md:text-base mb-1">Horror Mystery</h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-yellow-400">★ 7.9</span>
-                                <span class="text-gray-300 text-sm">2024</span>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <button class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-300">
-                                <i class="fas fa-play text-white text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Movie Card 6 -->
-            <div class="group cursor-pointer transform hover:scale-105 transition-all duration-300">
-                <div class="relative overflow-hidden rounded-lg shadow-lg">
-                    <img src="https://images.unsplash.com/photo-1518676590629-3dcbd9c5a5c9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" 
-                         alt="Movie Poster" 
-                         class="w-full h-64 md:h-80 object-cover group-hover:opacity-80 transition-opacity duration-300">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div class="absolute bottom-4 left-4 right-4">
-                            <h3 class="text-white font-semibold text-sm md:text-base mb-1">Documentary</h3>
-                            <div class="flex items-center space-x-2">
-                                <span class="text-yellow-400">★ 8.7</span>
-                                <span class="text-gray-300 text-sm">2024</span>
-                            </div>
-                        </div>
-                        <div class="absolute top-4 right-4">
-                            <button class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transform scale-0 group-hover:scale-100 transition-all duration-300">
-                                <i class="fas fa-play text-white text-sm"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-12">
-            <a href="#" class="inline-flex items-center text-red-500 hover:text-red-400 font-semibold text-lg transition-colors duration-200">
-                See All Movies
-                <i class="fas fa-arrow-right ml-2"></i>
-            </a>
-        </div>
-    </div>
+
 </section>
 
 <!-- Categories Section -->
@@ -849,53 +431,101 @@ function performSearch() {
     }
 }
 
-// Main function to load all movie data
-function loadMoviesData() {
-    console.log('Loading movies data...');
+// Main function to load essential content only
+async function loadMoviesData() {
+    console.log('Loading essential content...');
     
-    // Show loading states for all sections
+    // Show loading states for the main sections only
     showLoadingCards('trending-movies');
-    showLoadingCards('popular-movies');
-    showLoadingCards('popular-tv');
-    showLoadingCards('popular-anime');
     showLoadingCards('latest-movies');
+    showLoadingCards('popular-mixed');
     
-    // Load main sections
-    loadMovies('trending-movies', '/api/movies/trending');
-    loadMovies('popular-movies', '/api/movies/popular');
-    loadTVShows('popular-tv', '/api/tv/popular');
-    loadAnime('popular-anime', '/api/anime/popular');
-    loadMovies('latest-movies', '/api/movies/now_playing');
-    
-    // Load genre sections with small delay
-    setTimeout(() => {
-        showLoadingCards('action-movies');
-        showLoadingCards('comedy-movies');
-        showLoadingCards('horror-movies');
-        showLoadingCards('scifi-movies');
-        showLoadingCards('romance-movies');
-        showLoadingCards('animation-movies');
+    try {
+        // Load trending movies first
+        await loadMovies('trending-movies', '/api/movies/trending');
         
-        loadMoviesByGenre('action-movies', 28);
-        loadMoviesByGenre('comedy-movies', 35);
-        loadMoviesByGenre('horror-movies', 27);
-        loadMoviesByGenre('scifi-movies', 878);
-        loadMoviesByGenre('romance-movies', 10749);
-        loadMoviesByGenre('animation-movies', 16);
-    }, 1000);
-    
-    // Load more genres with additional delay
-    setTimeout(() => {
-        showLoadingCards('documentary-movies');
-        showLoadingCards('family-movies');
-        showLoadingCards('thriller-movies');
-        showLoadingCards('drama-movies');
+        // Load latest releases
+        await loadMovies('latest-movies', '/api/movies/now_playing');
         
-        loadMoviesByGenre('documentary-movies', 99);
-        loadMoviesByGenre('family-movies', 10751);
-        loadMoviesByGenre('thriller-movies', 53);
-        loadMoviesByGenre('drama-movies', 18);
-    }, 2000);
+        // Load mixed popular content (movies, TV shows, anime)
+        await loadMixedPopularContent();
+        
+    } catch (error) {
+        console.error('Error loading essential content:', error);
+    }
+}
+
+// Load mixed popular content from different sources
+async function loadMixedPopularContent() {
+    try {
+        // Load content from multiple sources in parallel
+        const [moviesResponse, tvResponse, animeResponse] = await Promise.all([
+            fetch('/api/movies/popular'),
+            fetch('/api/tv/popular'),
+            fetch('/api/anime/popular')
+        ]);
+        
+        const [moviesData, tvData, animeData] = await Promise.all([
+            moviesResponse.json(),
+            tvResponse.json(), 
+            animeResponse.json()
+        ]);
+        
+        // Combine and shuffle the results
+        let allContent = [];
+        
+        // Add movies (limit to 4)
+        if (moviesData.results?.length > 0) {
+            const movies = moviesData.results.slice(0, 4).map(item => ({...item, media_type: 'movie'}));
+            allContent.push(...movies);
+        }
+        
+        // Add TV shows (limit to 4)
+        if (tvData.results?.length > 0) {
+            const tvShows = tvData.results.slice(0, 4).map(item => ({...item, media_type: 'tv'}));
+            allContent.push(...tvShows);
+        }
+        
+        // Add anime (limit to 4) 
+        if (animeData.data?.length > 0) {
+            const anime = animeData.data.slice(0, 4).map(item => {
+                const posterUrl = item.images?.jpg?.image_url || item.images?.jpg?.large_image_url;
+                return {
+                    id: item.mal_id,
+                    title: item.title,
+                    poster_path: posterUrl,
+                    vote_average: item.score || 0,
+                    release_date: item.aired?.from || item.year,
+                    media_type: 'anime'
+                };
+            });
+            allContent.push(...anime);
+        }
+        
+        // Shuffle the combined content for variety
+        allContent = shuffleArray(allContent);
+        
+        // Display the mixed content
+        if (allContent.length > 0) {
+            displayMovies(allContent, 'popular-mixed');
+        } else {
+            showError('popular-mixed', 'No popular content found.');
+        }
+        
+    } catch (error) {
+        console.error('Error loading mixed popular content:', error);
+        showError('popular-mixed', 'Failed to load popular content.');
+    }
+}
+
+// Utility function to shuffle array
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
 }
 
 // Generic function to load movies from an API endpoint
@@ -1007,29 +637,6 @@ function loadAnime(containerId, endpoint) {
         });
 }
 
-// Function to load movies by genre
-function loadMoviesByGenre(containerId, genreId) {
-    fetch(`/api/movies/genre/${genreId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log(`Loaded genre data for ${containerId}:`, data);
-            
-            if (data.success && data.data && data.data.length > 0) {
-                displayMovies(data.data.slice(0, 12), containerId);
-            } else {
-                showError(containerId, 'No movies found for this genre.');
-            }
-        })
-        .catch(error => {
-            console.error(`Error loading genre ${genreId}:`, error);
-            showError(containerId, 'Failed to load movies. Please try again.');
-        });
-}
 
 // Display movies in a grid
 function displayMovies(movies, containerId) {

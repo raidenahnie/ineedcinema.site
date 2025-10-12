@@ -23,124 +23,127 @@
             <i class="fas fa-arrow-left text-xl"></i>
         </button>
         
-        <!-- Episode Controls -->
-        <div class="absolute top-4 right-4 z-10 flex gap-2">
-            <select 
-                onchange="changeType(this.value)" 
-                class="bg-black bg-opacity-70 text-white p-2 rounded border border-gray-600 focus:outline-none"
-            >
-                <option value="sub" {{ $type === 'sub' ? 'selected' : '' }}>Subtitled</option>
-                <option value="dub" {{ $type === 'dub' ? 'selected' : '' }}>Dubbed</option>
-            </select>
-            
-            <div class="flex items-center gap-2 bg-black bg-opacity-70 text-white p-2 rounded">
-                <button onclick="changeEpisode(-1)" class="hover:text-red-400">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <span>Episode {{ $episode }}</span>
-                <button onclick="changeEpisode(1)" class="hover:text-red-400">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
+        <!-- Episode Info Overlay (Dismissible) -->
+        <div id="episode-overlay" class="absolute bottom-4 left-4 right-4 bg-black bg-opacity-70 text-white p-4 rounded-lg transition-opacity duration-300 cursor-pointer" onclick="hideOverlay()">
+            <button class="absolute top-2 right-2 text-gray-300 hover:text-white" onclick="hideOverlay(); event.stopPropagation();">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="text-xl font-bold">{{ $anime['name'] ?? 'Unknown Anime' }}</h2>
+            <p class="text-gray-300">Season {{ $season }}, Episode {{ $episode }}</p>
+            <p class="text-xs text-gray-400 mt-1">Click to hide</p>
         </div>
     </div>
 
     <!-- Anime Info Section -->
     <div class="px-6 py-8">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex flex-col md:flex-row gap-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col lg:flex-row gap-8">
                 <!-- Anime Poster -->
                 <div class="flex-shrink-0">
                     <img 
-                        src="{{ $anime['images']['jpg']['large_image_url'] ?? $anime['images']['jpg']['image_url'] ?? '/images/placeholder-poster.jpg' }}"
-                        alt="{{ $anime['title'] }}"
+                        src="{{ $anime['poster_path'] ? 'https://image.tmdb.org/t/p/w500' . $anime['poster_path'] : '/images/placeholder-poster.jpg' }}"
+                        alt="{{ $anime['name'] }}"
                         class="w-64 h-96 object-cover rounded-lg shadow-lg"
                     >
                 </div>
                 
-                <!-- Anime Details -->
+                <!-- Anime Details and Episodes -->
                 <div class="flex-grow text-white">
-                    <h1 class="text-4xl font-bold mb-4">{{ $anime['title'] ?? 'Unknown Anime' }}</h1>
-                    
-                    @if(isset($anime['title_japanese']))
-                        <h2 class="text-xl text-gray-300 mb-4">{{ $anime['title_japanese'] }}</h2>
-                    @endif
+                    <h1 class="text-4xl font-bold mb-4">{{ $anime['name'] ?? 'Unknown Anime' }}</h1>
                     
                     <div class="flex flex-wrap gap-4 mb-6">
-                        @if(isset($anime['score']) && $anime['score'])
+                        @if(isset($anime['vote_average']))
                             <span class="bg-yellow-600 px-3 py-1 rounded-full text-sm font-semibold">
                                 <i class="fas fa-star mr-1"></i>
-                                {{ number_format($anime['score'], 1) }}
+                                {{ number_format($anime['vote_average'], 1) }}
                             </span>
                         @endif
-                        @if(isset($anime['year']))
+                        @if(isset($anime['first_air_date']))
                             <span class="bg-gray-700 px-3 py-1 rounded-full text-sm">
-                                {{ $anime['year'] }}
+                                {{ \Carbon\Carbon::parse($anime['first_air_date'])->format('Y') }}
                             </span>
                         @endif
-                        @if(isset($anime['episodes']))
+                        @if(isset($anime['number_of_seasons']))
                             <span class="bg-gray-700 px-3 py-1 rounded-full text-sm">
-                                {{ $anime['episodes'] }} Episodes
+                                {{ $anime['number_of_seasons'] }} Season{{ $anime['number_of_seasons'] > 1 ? 's' : '' }}
                             </span>
                         @endif
-                        @if(isset($anime['status']))
-                            <span class="bg-blue-600 px-3 py-1 rounded-full text-sm">
-                                {{ $anime['status'] }}
-                            </span>
+                        <span class="bg-red-600 px-3 py-1 rounded-full text-sm font-semibold">
+                            <i class="fas fa-tv mr-1"></i> ANIME
+                        </span>
+                    </div>
+                    
+                    <!-- Current Episode Info -->
+                    <div class="bg-gray-800 p-4 rounded-lg mb-6">
+                        <h3 class="text-xl font-semibold mb-2">
+                            Now Playing: Season {{ $season }}, Episode {{ $episode }}
+                        </h3>
+                        @if($currentEpisode)
+                            <h4 class="text-lg text-gray-300 mb-2">{{ $currentEpisode['name'] ?? "Episode $episode" }}</h4>
+                            @if(isset($currentEpisode['overview']) && $currentEpisode['overview'])
+                                <p class="text-gray-400 text-sm">{{ $currentEpisode['overview'] }}</p>
+                            @endif
                         @endif
                     </div>
                     
-                    <!-- Genres -->
-                    @if(isset($anime['genres']) && count($anime['genres']) > 0)
+                    <!-- Episode Navigation -->
+                    @if($episodes && count($episodes) > 0)
                         <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-2">Genres</h3>
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($anime['genres'] as $genre)
-                                    <span class="bg-red-600 px-3 py-1 rounded-full text-sm">
-                                        {{ $genre['name'] }}
-                                    </span>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-semibold">Season {{ $season }} Episodes</h3>
+                                
+                                <!-- Season Selector -->
+                                @if($anime['number_of_seasons'] > 1)
+                                    <div class="flex items-center gap-2">
+                                        <label class="text-sm text-gray-400">Season:</label>
+                                        <select 
+                                            id="season-selector" 
+                                            class="bg-gray-700 text-white px-3 py-1 rounded"
+                                            onchange="changeSeason(this.value)"
+                                        >
+                                            @for($s = 1; $s <= $anime['number_of_seasons']; $s++)
+                                                <option value="{{ $s }}" {{ $s == $season ? 'selected' : '' }}>
+                                                    Season {{ $s }}
+                                                </option>
+                                            @endfor
+                                        </select>
+                                    </div>
+                                @endif
+                            </div>
+                            
+                            <!-- Episodes Grid -->
+                            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
+                                @foreach($episodes as $ep)
+                                    <div class="bg-gray-800 rounded-lg p-3 cursor-pointer hover:bg-gray-700 transition-colors {{ $ep['episode_number'] == $episode ? 'ring-2 ring-red-500' : '' }}"
+                                         onclick="playEpisode({{ $season }}, {{ $ep['episode_number'] }})">
+                                        @if(isset($ep['still_path']) && $ep['still_path'])
+                                            <img 
+                                                src="https://image.tmdb.org/t/p/w300{{ $ep['still_path'] }}"
+                                                alt="Episode {{ $ep['episode_number'] }}"
+                                                class="w-full h-20 object-cover rounded mb-2"
+                                            >
+                                        @else
+                                            <div class="w-full h-20 bg-gray-600 rounded mb-2 flex items-center justify-center">
+                                                <i class="fas fa-play text-gray-400"></i>
+                                            </div>
+                                        @endif
+                                        <p class="text-sm font-semibold">Episode {{ $ep['episode_number'] }}</p>
+                                        <p class="text-xs text-gray-400 truncate">{{ $ep['name'] ?? "Episode {$ep['episode_number']}" }}</p>
+                                    </div>
                                 @endforeach
                             </div>
                         </div>
                     @endif
                     
-                    <!-- Synopsis -->
-                    @if(isset($anime['synopsis']) && $anime['synopsis'])
+                    <!-- Show Overview -->
+                    @if(isset($anime['overview']) && $anime['overview'])
                         <div class="mb-6">
-                            <h3 class="text-lg font-semibold mb-2">Synopsis</h3>
+                            <h3 class="text-lg font-semibold mb-2">About the Show</h3>
                             <p class="text-gray-300 leading-relaxed">
-                                {{ $anime['synopsis'] }}
+                                {{ $anime['overview'] }}
                             </p>
                         </div>
                     @endif
-                    
-                    <!-- Additional Info -->
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        @if(isset($anime['studios']) && count($anime['studios']) > 0)
-                            <div>
-                                <span class="text-gray-400">Studio:</span>
-                                <span class="text-white">{{ $anime['studios'][0]['name'] }}</span>
-                            </div>
-                        @endif
-                        @if(isset($anime['source']))
-                            <div>
-                                <span class="text-gray-400">Source:</span>
-                                <span class="text-white">{{ $anime['source'] }}</span>
-                            </div>
-                        @endif
-                        @if(isset($anime['rating']))
-                            <div>
-                                <span class="text-gray-400">Rating:</span>
-                                <span class="text-white">{{ $anime['rating'] }}</span>
-                            </div>
-                        @endif
-                        @if(isset($anime['duration']))
-                            <div>
-                                <span class="text-gray-400">Duration:</span>
-                                <span class="text-white">{{ $anime['duration'] }}</span>
-                            </div>
-                        @endif
-                    </div>
                 </div>
             </div>
         </div>
@@ -156,23 +159,32 @@ function goBack() {
     }
 }
 
-function changeType(type) {
-    const url = new URL(window.location);
-    url.searchParams.set('type', type);
-    window.location.href = url.toString();
+function playEpisode(season, episode) {
+    window.location.href = '/watch/anime/{{ $anime["id"] }}?season=' + season + '&episode=' + episode;
 }
 
-function changeEpisode(direction) {
-    const currentEpisode = {{ $episode }};
-    const newEpisode = Math.max(1, currentEpisode + direction);
-    
-    const url = new URL(window.location);
-    url.searchParams.set('episode', newEpisode);
-    window.location.href = url.toString();
+function changeSeason(season) {
+    window.location.href = '/watch/anime/{{ $anime["id"] }}?season=' + season + '&episode=1';
 }
 
-// Try to unmute video on load
+// Hide overlay function
+function hideOverlay() {
+    const overlay = document.getElementById('episode-overlay');
+    if (overlay) {
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            overlay.style.display = 'none';
+        }, 300);
+    }
+}
+
+// Auto-hide overlay after 5 seconds and try to unmute
 document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        hideOverlay();
+    }, 5000);
+    
+    // Try to unmute video on load
     const iframe = document.getElementById('anime-player');
     if (iframe) {
         iframe.onload = function() {
@@ -196,13 +208,6 @@ document.addEventListener('keydown', function(e) {
     }
     if (e.key === 'Escape') {
         exitFullscreen();
-    }
-    
-    // Arrow key navigation
-    if (e.key === 'ArrowRight') {
-        changeEpisode(1);
-    } else if (e.key === 'ArrowLeft') {
-        changeEpisode(-1);
     }
 });
 

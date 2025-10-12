@@ -118,15 +118,7 @@ class TVShowController extends Controller
         $query = $request->input('q');
         $page = $request->input('page', 1);
 
-        $results = $this->tmdbService->search($query, $page);
-        
-        // Filter to only TV shows
-        if (isset($results['results'])) {
-            $results['results'] = array_filter($results['results'], function($item) {
-                return ($item['media_type'] ?? 'tv') === 'tv';
-            });
-            $results['results'] = array_values($results['results']); // Re-index array
-        }
+        $results = $this->tmdbService->searchTVShows($query, $page);
 
         // Process results to add streaming URLs
         if (isset($results['results'])) {
@@ -147,8 +139,7 @@ class TVShowController extends Controller
     public function airingToday(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
-        // Use popular TV shows as a fallback since we don't have the specific method
-        $results = $this->tmdbService->getPopularTVShows($page);
+        $results = $this->tmdbService->getAiringTodayTVShows($page);
 
         // Process results to add streaming URLs and image URLs
         if (isset($results['results'])) {
@@ -177,8 +168,7 @@ class TVShowController extends Controller
     public function onTheAir(Request $request): JsonResponse
     {
         $page = $request->input('page', 1);
-        // Use popular TV shows as a fallback since we don't have the specific method
-        $results = $this->tmdbService->getPopularTVShows($page);
+        $results = $this->tmdbService->getOnTheAirTVShows($page);
 
         // Process results to add streaming URLs and image URLs
         if (isset($results['results'])) {
@@ -207,8 +197,7 @@ class TVShowController extends Controller
     public function byGenre(Request $request, int $genreId): JsonResponse
     {
         $page = $request->input('page', 1);
-        // Use popular TV shows as a fallback since we don't have the specific method
-        $results = $this->tmdbService->getPopularTVShows($page);
+        $results = $this->tmdbService->getTVShowsByGenre($genreId, $page);
 
         // Process results to add streaming URLs and image URLs
         if (isset($results['results'])) {

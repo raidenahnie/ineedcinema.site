@@ -19,6 +19,16 @@ Route::get('/test', function () {
     return response()->json(['status' => 'working']);
 });
 
+Route::get('/test-anime-tmdb', function () {
+    $tmdbService = app(\App\Services\TMDBService::class);
+    $result = $tmdbService->searchAnimeByTitle('Spy x Family');
+    return response()->json([
+        'search_query' => 'Spy x Family',
+        'result' => $result,
+        'tmdb_id' => $result['id'] ?? 'not found'
+    ]);
+});
+
 Route::get('/test-urls', function () {
     $service = app(\App\Services\VidLinkService::class);
     return [
@@ -28,6 +38,22 @@ Route::get('/test-urls', function () {
         'anime_dub_url' => $service->getAnimeStreamUrl(5, 1, false),
         'anime_sub_fallback' => $service->getAnimeStreamUrlWithFallback(5, 1, true),
     ];
+});
+
+
+
+Route::get('/test-anime-api', function () {
+    try {
+        // Test HTTP client directly
+        $response = \Illuminate\Support\Facades\Http::get('https://api.jikan.moe/v4/top/anime?limit=1');
+        if ($response->successful()) {
+            return ['status' => 'External API working', 'data' => $response->json()];
+        } else {
+            return ['status' => 'External API failed', 'status_code' => $response->status()];
+        }
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()], 500);
+    }
 });
 
 // API Routes
@@ -56,6 +82,7 @@ Route::prefix('api')->group(function () {
     });
     Route::prefix('anime')->group(function () {
         Route::get('/search', [AnimeController::class, 'search']);
+        Route::get('/filter', [AnimeController::class, 'filter']);
         Route::get('/top', [AnimeController::class, 'top']);
         Route::get('/popular', [AnimeController::class, 'popular']);
         Route::get('/season/now', [AnimeController::class, 'seasonNow']);

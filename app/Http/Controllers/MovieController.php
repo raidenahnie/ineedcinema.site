@@ -24,11 +24,11 @@ class MovieController extends Controller
     public function search(Request $request): JsonResponse
     {
         $request->validate([
-            'query' => 'required|string|min:1|max:255',
+            'q' => 'required|string|min:1|max:255',
             'page' => 'sometimes|integer|min:1|max:1000'
         ]);
 
-        $query = $request->input('query');
+        $query = $request->input('q');
         $page = $request->input('page', 1);
 
         $results = $this->tmdbService->search($query, $page);
@@ -244,15 +244,7 @@ class MovieController extends Controller
         $query = $request->input('q');
         $page = $request->input('page', 1);
 
-        $results = $this->tmdbService->search($query, $page);
-        
-        // Filter to only movies
-        if (isset($results['results'])) {
-            $results['results'] = array_filter($results['results'], function($item) {
-                return ($item['media_type'] ?? 'movie') === 'movie';
-            });
-            $results['results'] = array_values($results['results']); // Re-index array
-        }
+        $results = $this->tmdbService->searchMovies($query, $page);
 
         // Process results to add streaming URLs
         if (isset($results['results'])) {
