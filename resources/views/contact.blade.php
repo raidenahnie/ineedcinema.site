@@ -33,10 +33,9 @@
 
                     <form id="contactForm" action="https://api.web3forms.com/submit" method="POST" class="space-y-6">
                         <!-- Web3Forms Access Key -->
-                        <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
+                        <input type="hidden" name="access_key" value="c1ecfb44-d6ba-4e45-8ef2-1e550a301791">
                         <input type="hidden" name="subject" value="New Contact from iNeedCinema">
                         <input type="hidden" name="from_name" value="iNeedCinema Contact Form">
-                        <input type="hidden" name="redirect" value="{{ url('/contact?success=true') }}">
                         
                         <!-- Name Field -->
                         <div>
@@ -150,28 +149,6 @@
                                 We typically respond within <strong class="text-blue-400">24-48 hours</strong> during business days.
                             </p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Social Links -->
-                <div class="bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-xl">
-                    <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                        <i class="fas fa-share-alt text-red-500"></i>
-                        Connect With Us
-                    </h3>
-                    <div class="flex gap-3">
-                        <a href="#" class="w-12 h-12 flex items-center justify-center bg-gray-700/50 hover:bg-blue-600 rounded-xl text-gray-400 hover:text-white transition-all duration-300 hover:scale-110">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="#" class="w-12 h-12 flex items-center justify-center bg-gray-700/50 hover:bg-sky-500 rounded-xl text-gray-400 hover:text-white transition-all duration-300 hover:scale-110">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-12 h-12 flex items-center justify-center bg-gray-700/50 hover:bg-pink-600 rounded-xl text-gray-400 hover:text-white transition-all duration-300 hover:scale-110">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="#" class="w-12 h-12 flex items-center justify-center bg-gray-700/50 hover:bg-red-600 rounded-xl text-gray-400 hover:text-white transition-all duration-300 hover:scale-110">
-                            <i class="fab fa-youtube"></i>
-                        </a>
                     </div>
                 </div>
             </div>
